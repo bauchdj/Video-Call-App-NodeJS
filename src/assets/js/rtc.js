@@ -52,21 +52,22 @@ window.addEventListener( 'load', () => {
 
 			socket.emit( 'subscribe', {
 				room: room,
-				socketId: socketId
+				socketId: socketId,
+				name: username
 			} );
 
 
 			socket.on( 'new user', ( data ) => {
-				socket.emit( 'newUserStart', { to: data.socketId, sender: { id: socketId, name: username }});
+				socket.emit( 'newUserStart', { to: data.socketId, sender: socketId, name: username });
 				pc.push( data.socketId );
+				peerNamesById[data.socketId] = data.name;
 				init( true, data.socketId );
 			} );
 
 			socket.on( 'newUserStart', ( data ) => {
-				const senderId = data.sender.id;
-				peerNamesById[senderId] = data.sender.name;
-				pc.push( senderId );
-				init( false, senderId );
+				peerNamesById[data.sender] = data.name;
+				pc.push( data.sender );
+				init( false, data.sender );
 			} );
 
 
@@ -94,16 +95,14 @@ window.addEventListener( 'load', () => {
 
 						let answer = await pc[data.sender].createAnswer();
 						await pc[data.sender].setLocalDescription( answer );
-						socket.emit( 'sdp', { description: pc[data.sender].localDescription, to: data.sender, sender: { id: socketId, name: username }});
+						socket.emit( 'sdp', { description: pc[data.sender].localDescription, to: data.sender, sender: socketId });
 					} ).catch( ( e ) => {
 						console.error( e );
 					} );
 				}
 
 				else if ( data.description.type === 'answer' ) {
-					const senderId = data.sender.id;
-					peerNamesById[senderId] = data.sender.name;
-					await pc[senderId].setRemoteDescription( new RTCSessionDescription( data.description ) );
+					await pc[data.sender].setRemoteDescription( new RTCSessionDescription( data.description ) );
 				}
 			} );
 
@@ -294,6 +293,7 @@ document.querySelector('#local').play()
 						h.closeVideo( partnerName );
 						break;
 				}
+				delete peerNamesById[partnerName];
 			};
 
 
@@ -305,6 +305,7 @@ document.querySelector('#local').play()
 						h.closeVideo( partnerName );
 						break;
 				}
+				delete peerNamesById[partnerName];
 			};
 		}
 
