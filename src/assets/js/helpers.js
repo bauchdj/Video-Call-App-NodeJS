@@ -210,6 +210,7 @@ export default {
 			contentAlign = 'justify-content-start';
 			//senderName = data.sender.split('(')[0].split(/ $/)[0];
 			//const sender = (data.to ? "Private, From: " : "To Group, From: ") + data.sender; // both work for string concatenate
+			console.log(data.to);
 			const sender = `${data.to ? "Private, From:" : "To Group, From:"} ${data.sender}`
 			senderName = sender.split('(')[0].split(/ $/)[0];
 			msgBg = '';
@@ -223,7 +224,7 @@ export default {
 
 		let colDiv = document.createElement( 'div' );
 		colDiv.className = `col-10 card chat-card msg ${ msgBg }`;
-		colDiv.innerHTML = xssFilters.inHTMLData( data.msg ).autoLink( { target: "_blank", rel: "nofollow"});
+		colDiv.innerHTML = xssFilters.inHTMLData(data.msg).autoLink({ target: "_blank", rel: "nofollow"}).replace(/\n/g, '<br>');
 		colDiv.style.padding = '3px';
 
 		let rowDiv = document.createElement( 'div' );

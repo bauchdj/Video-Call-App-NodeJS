@@ -45,6 +45,8 @@ window.addEventListener( 'load', () => {
 			chatElem.classList.add( 'chat-opened' );
 		}
 
+		document.querySelector("#chat-input").focus();
+
 		//remove the 'New' badge on chat icon (if any) once chat is opened.
 		setTimeout( () => {
 			if ( document.querySelector( '#chat-pane' ).classList.contains( 'chat-opened' ) ) {

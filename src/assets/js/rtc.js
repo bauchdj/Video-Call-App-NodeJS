@@ -142,7 +142,7 @@ window.addEventListener( 'load', () => {
 			socket.emit( 'chat', data );
 
 			const optionSelected = selectEl[selectEl.selectedIndex];
-			if (optionSelected) {
+			if (selectEl.value && optionSelected) {
 				data["to"] = optionSelected.text
 			}
 
@@ -429,7 +429,7 @@ document.querySelector('#local').play()
 
 		//Chat textarea
 		document.getElementById( 'chat-input' ).addEventListener( 'keypress', ( e ) => {
-			if ( e.which === 13 && ( e.target.value.trim() ) ) {
+			if ( !e.shiftKey && e.which === 13 && ( e.target.value.trim() ) ) {
 				e.preventDefault();
 
 				sendMsg( e.target.value );
@@ -456,7 +456,7 @@ document.querySelector('#local').play()
 			broadcastNewTracks( myStream, 'video' );
 		}
 
-		document.addEventListener('keydown', e => { if (e.key === 'c') { toggleMyVideo() } });
+		document.addEventListener('keydown', e => { if (e.key === 'c' && document.activeElement !== document.querySelector("#chat-input")) { toggleMyVideo() } });
 
 		//When the video icon is clicked
 		document.getElementById('toggle-video').addEventListener( 'click', ( e ) => {
@@ -557,7 +557,7 @@ document.querySelector('#local').play()
 			updateAudioTrack();
 		}
 
-		document.addEventListener('keydown', e => { if (e.key === 'm') { toggleAudio() } });
+		document.addEventListener('keydown', e => { if (e.key === 'm' && document.activeElement !== document.querySelector("#chat-input")) { toggleAudio() } });
 
 		//When the mute icon is clicked
 		document.getElementById('toggle-mute').addEventListener( 'click', ( e ) => {
