@@ -130,16 +130,22 @@ window.addEventListener( 'load', () => {
 			let data = {
 				room: room,
 				msg: msg,
-				sender: `${username} (${randomNumber})`
+				sender: `${username} (${randomNumber})`,
 			};
 
-			const peerId = document.querySelector('#direct-message').value;
-			if (peerId) {
-				data["to"] = peerId;
+			const selectEl = document.querySelector('#direct-message');
+			const peerId = selectEl.value;
+			if (selectEl.value) {
+				data["to"] = selectEl.value;
 			}
 
 			//emit chat message
 			socket.emit( 'chat', data );
+
+			const optionSelected = selectEl[selectEl.selectedIndex];
+			if (optionSelected) {
+				data["to"] = optionSelected.text
+			}
 
 			//add localchat
 			h.addChat( data, 'local' );

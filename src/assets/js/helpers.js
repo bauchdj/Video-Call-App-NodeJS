@@ -203,12 +203,15 @@ export default {
 	addChat( data, senderType ) {
 		let chatMsgDiv = document.querySelector( '#chat-messages' );
 		let contentAlign = 'justify-content-end';
-		let senderName = 'You';
+		let senderName = data.to ? "To " + data.to : "To Group";
 		let msgBg = 'bg-white';
 
 		if ( senderType === 'remote' ) {
 			contentAlign = 'justify-content-start';
-			senderName = data.sender.split('(')[0].split(/ $/)[0];
+			//senderName = data.sender.split('(')[0].split(/ $/)[0];
+			//const sender = (data.to ? "Private, From: " : "To Group, From: ") + data.sender; // both work for string concatenate
+			const sender = `${data.to ? "Private, From:" : "To Group, From:"} ${data.sender}`
+			senderName = sender.split('(')[0].split(/ $/)[0];
 			msgBg = '';
 
 			this.toggleChatNotificationBadge();

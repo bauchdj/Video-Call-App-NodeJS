@@ -27,7 +27,9 @@ const stream = ( socket ) => {
 
 
     socket.on( 'chat', ( data ) => {
-        socket.to( data.room ).emit( 'chat', { sender: data.sender, msg: data.msg } );
+		sendToPersonOrGroup = data.to ? data.to : data.room;
+		ifPrivateTo = data.to ? data.to : data.room;
+        socket.to(sendToPersonOrGroup).emit( 'chat', { sender: data.sender, msg: data.msg, to: ifPrivateTo } );
     } );
 };
 
