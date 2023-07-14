@@ -159,7 +159,16 @@ window.addEventListener( 'load', () => {
 
 	//Enable enter key on homepage and your name page
 	if (window.location.href === 'https://call.talkofchrist.org/') {
-		document.addEventListener('keydown', e => { if (e.key === 'Enter') { createRoom(document.getElementById('create-room').parentNode.parentNode); } }); 
+		document.addEventListener('keydown', e => {
+			if (e.key === 'Enter') {
+				let el = document.querySelector("#room-create > div.row.mt-2 > div:nth-child(5) > div");
+				if (el) {
+					el.click();
+				} else {
+					createRoom(document.getElementById('create-room').parentNode.parentNode);
+				}
+			}
+		}); 
 	} else if (!sessionStorage[username]) {
 		document.addEventListener('keydown', e => { if (e.key === 'Enter') { enterRoom(document.getElementById('enter-room')); } });
 	}
