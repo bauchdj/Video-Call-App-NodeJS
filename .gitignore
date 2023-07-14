@@ -27,3 +27,4 @@ node_modules/
 
 #Personal config
 *ice-server.json
+*ice-server.js
