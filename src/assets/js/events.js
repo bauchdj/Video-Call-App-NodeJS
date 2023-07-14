@@ -1,7 +1,7 @@
 import helpers from './helpers.js';
 
 window.addEventListener( 'load', () => {
-	//if (helpers.iosDevice) { document.getElementById('local').classList.add('ios-video') };
+	//if (helpers.iosDevice) { document.getElementById('local').classList.add('ios-video'); }
 	helpers.iosDeviceAddOns(document.querySelector('#local'));
 
 	Sortable.create(videos, {
@@ -75,9 +75,6 @@ window.addEventListener( 'load', () => {
 */
 
 	const createRoom = e => {
-		const roomCreated = document.querySelector('#room-created');
-		if (roomCreated) { roomCreated.remove(); }
-
 		const roomName = document.querySelector( '#room-name' ).value;
 		const yourName = document.querySelector( '#your-name' ).value;
 		if (!roomName || !yourName) {
@@ -90,26 +87,24 @@ window.addEventListener( 'load', () => {
 		const roomLink = `${location.origin}?room=${roomName.trim().replace(' ','_')}`;
 
 		const setButtons = (enterRoom, copyLink) => {
+			copyLink.textContent = "Copy Link";
 			enterRoom.onclick = () => { window.location.href = roomLink; }
 			copyLink.onclick = () => {
 				navigator.clipboard.writeText(roomLink);
 				copyLink.textContent = "Link copied!";
 			}
-		};
+		}
 
 		// if no buttons have been added
 		if (e.children.length > 4) {
 			const c = e.children;
 			const cLen = c.length;
-			setButtons(c[cLen - 2], c[cLen - 1]);
+			const el = i => { return c[cLen - i].firstChild; }
+			setButtons(el(2), el(1)); // gets 2nd to last && last elements firstChild
 		} else {
 			const outerDiv = e => { return e.appendChild(Object.assign(document.createElement("div"), { className: "col-12 col-md-4 offset-md-4 mb-3" })); }
-			const innerDiv = (e, text) => { return e.appendChild(Object.assign(document.createElement("div"), { className: "btn btn-block rounded-0 btn-info", textContent: text })); }
-
-			const enterRoom = innerDiv(outerDiv(e), "Enter Room");
-			const copyLink = innerDiv(outerDiv(e), "Copy Link");
-
-			setButtons(enterRoom, copyLink);
+			const innerDiv = text => { return outerDiv(e).appendChild(Object.assign(document.createElement("div"), { className: "btn btn-block rounded-0 btn-info", textContent: text })); }
+			setButtons(innerDiv("Enter Room"), innerDiv("copy link"));
 		}
 
 /*
