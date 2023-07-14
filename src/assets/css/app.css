@@ -41,6 +41,12 @@ body,
 	}
 }
 
+#direct-message {
+	width: 100%;
+	padding: 0.3rem;
+	border-radius: 0.375rem;
+}
+
 #navbar {
 	visibility: hidden;
 	background-color: rgba(0, 0, 0, 0.5);

@@ -79,6 +79,14 @@ export default {
 	closeVideo( elemId ) {
 		if ( document.getElementById( elemId ) ) {
 			document.getElementById( elemId ).remove();
+			const optionEls = document.querySelector('#direct-message').children;
+			if (optionEls) {
+				for (let i = 0; i < optionEls.length; i++) {
+					if (optionEls[i] && optionEls[i].value) {
+						if (optionEls[i].value === elemId) { optionEls[i].remove(); }
+					}
+				}
+			}
 			this.adjustVideoElemSize();
 		}
 	},

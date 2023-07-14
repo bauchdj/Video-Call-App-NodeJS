@@ -30,7 +30,7 @@ window.addEventListener( 'load', () => {
 		var pc = [];
 		var peerNamesById = {};
 
-		let socket = io( '/stream' );
+		let socket = io('/stream');
 
 		var socketId = '';
 		var randomNumber = `__${h.generateRandomString()}__${h.generateRandomString()}__`;
@@ -107,7 +107,6 @@ window.addEventListener( 'load', () => {
 				}
 			} );
 
-
 			socket.on( 'chat', ( data ) => {
 				h.addChat( data, 'remote' );
 			} );
@@ -133,6 +132,11 @@ window.addEventListener( 'load', () => {
 				msg: msg,
 				sender: `${username} (${randomNumber})`
 			};
+
+			const peerId = document.querySelector('#direct-message').value;
+			if (peerId) {
+				data["to"] = peerId;
+			}
 
 			//emit chat message
 			socket.emit( 'chat', data );
@@ -266,6 +270,8 @@ document.querySelector('#local').play()
 					document.getElementById( 'videos' ).appendChild( cardDiv );
 
 					//h.adjustVideoElemSize();
+
+					document.querySelector('#direct-message').appendChild(Object.assign(document.createElement("option"), { value: partnerName, text: peerNamesById[partnerName] }))
 				}
 			};
 
@@ -475,7 +481,7 @@ document.querySelector('#local').play()
 						alignItems: 'center',
 					});
 
-					blocker.onclick = () => { blocker.remove() };
+					blocker.onclick = () => { blocker.remove(); }
 
 					const displayModal = blocker.appendChild(Object.assign(document.createElement("div"), { textContent: "Select a camera:" }));
 					Object.assign(displayModal.style, {
@@ -495,7 +501,7 @@ document.querySelector('#local').play()
 						//higher order function call :)
 						option.onclick = ((id) => {
 							return () => {
-								blocker.remove();
+								//blocker.remove(); // blocker.onlick gets run whenever you click on its children
 								// Was used to toggle front to back //const constraint = myStream.getVideoTracks()[0].getSettings().facingMode == "environment" ? true : { deviceId: id };
 								h.getUserFullMedia({ deviceId: id }).then(stream => {
 									myStream = stream;
