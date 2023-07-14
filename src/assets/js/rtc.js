@@ -286,14 +286,11 @@ document.querySelector('#local').play()
 				switch ( pc[partnerName].iceConnectionState ) {
 					case 'disconnected':
 					case 'failed':
-						h.closeVideo( partnerName );
-						break;
-
 					case 'closed':
 						h.closeVideo( partnerName );
+						delete peerNamesById[partnerName];
 						break;
 				}
-				delete peerNamesById[partnerName];
 			};
 
 
@@ -303,9 +300,9 @@ document.querySelector('#local').play()
 					case 'closed':
 						console.log( "Signalling state is 'closed'" );
 						h.closeVideo( partnerName );
+						delete peerNamesById[partnerName];
 						break;
 				}
-				delete peerNamesById[partnerName];
 			};
 		}
 
