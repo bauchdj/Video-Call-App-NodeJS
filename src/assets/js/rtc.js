@@ -3,7 +3,8 @@
  * @date 6th January, 2020
  */
 import h from './helpers.js';
-import iceServer from '../json/ice-server.json' assert { type: 'json' };
+//import iceServer from '../json/ice-server.json' assert { type: 'json' }; // Safari doesn't allow assert or with to specify type
+import iceServer from './ice-server.js';
 
 window.addEventListener( 'load', () => {
     const room = h.getQString( location.href, 'room' );
