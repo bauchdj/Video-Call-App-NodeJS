@@ -1,4 +1,73 @@
+function adjustVideoElemSize() {
+    const videoContainer = document.getElementById( 'video-container' );
+    //const navbarOffsetHeight = document.querySelector('.navbar').offsetHeight;
+    //videoContainer.style.bottom = `${navbarOffsetHeight}px`;
+
+    const videoCardEls = document.querySelectorAll('#videos .card');
+    const totalVideos = videoCardEls.length;
+	const screenWidthLimit = 800;
+
+    function calcNewWidth(totalVideos) {
+        if (totalVideos == 1) return '100%';
+        if (totalVideos <= 4) return '50%';
+        if (totalVideos <= 6) return '33.3%';
+        if (totalVideos <= 8) return '25%';
+        if (totalVideos <= 15) return '20%';
+        if (totalVideos <= 18) return '16%';
+        if (totalVideos <= 23) return '15%';
+        if (totalVideos <= 32) return '12%';
+        return '50%';
+    }
+
+    for ( let i = 0; i < totalVideos; i++ ) {
+        if (window.innerWidth < screenWidthLimit) {
+            videoCardEls[i].style.width = "100%";
+        } else {
+            videoCardEls[i].style.width = calcNewWidth(totalVideos);
+        }
+    }
+        
+    function scaleVideoContainer() {
+		const setVideoContainerWidth = width => videoContainer.style.width = width;
+        if ( window.innerWidth < screenWidthLimit ) {
+			videoContainer.style.overflow = "auto";
+            setVideoContainerWidth('100%');
+        } else {
+			videoContainer.style.overflow = "unset";
+      	    setVideoContainerWidth('100%');
+           	const desiredHeight = videoContainer.offsetHeight;
+           	const scrollHeight = videoContainer.scrollHeight;
+           	const width = ( ( desiredHeight / scrollHeight ) * 100 );
+           	setVideoContainerWidth(`${width}%`);
+        }
+    }
+
+    scaleVideoContainer();
+    //setTimeout(() => scaleVideoContainer(), 1000);
+}
+
 export default {
+	adjustVideoElemSize: adjustVideoElemSize,
+
+	resizeObserver: new ResizeObserver(entries => adjustVideoElemSize()),
+
+	iosDevice: (navigator.userAgent.match(/(iPod|iPhone|iPad)/)),
+
+	iosDeviceAddOns: e => {
+		if (navigator.userAgent.match(/(iPod|iPhone|iPad)/)) {
+			console.log('ios device');
+			e.addEventListener("pause", () => {
+  				e.play();
+			});
+  			const match = navigator.userAgent.match(/OS (\d+)_(\d+)_?(\d+)?/);
+  			const version = match ? Number(match[1]) : null;
+			if (version !== null && version < 16) {
+				console.log('ios', version);
+				//e.classList.add('ios-video');
+			}
+		}
+	},
+
     generateRandomString() {
         const crypto = window.crypto || window.msCrypto;
         let array = new Uint32Array(1);
@@ -53,10 +122,10 @@ export default {
     },
 
 
-    getUserFullMedia() {
-        if ( this.userMediaAvailable() ) {
+    getUserFullMedia(constraint = true) {
+    	if ( this.userMediaAvailable() ) {
             return navigator.mediaDevices.getUserMedia( {
-                video: true,
+                video: constraint,
                 audio: {
                     echoCancellation: true,
                     noiseSuppression: true
@@ -93,7 +162,7 @@ export default {
                 video: {
                     cursor: "always"
                 },
-                audio: {
+                audio:  {
                     echoCancellation: true,
                     noiseSuppression: true,
                     sampleRate: 44100
@@ -111,15 +180,12 @@ export default {
         return {
             iceServers: [
                 {
-                    urls: ["stun:eu-turn4.xirsys.com"]
+                    urls: "stun:stun.l.google.com:19302"
                 },
                 {
-                    username: "ml0jh0qMKZKd9P_9C0UIBY2G0nSQMCFBUXGlk6IXDJf8G2uiCymg9WwbEJTMwVeiAAAAAF2__hNSaW5vbGVl",
-                    credential: "4dd454a6-feee-11e9-b185-6adcafebbb45",
-                    urls: [
-                        "turn:eu-turn4.xirsys.com:80?transport=udp",
-                        "turn:eu-turn4.xirsys.com:3478?transport=tcp"
-                    ]
+                    username: "gorst",
+                    credential: "turn4ezmdm",
+                    urls: "turn:3.218.145.16:13478?transport=udp",
                 }
             ]
         };
@@ -134,7 +200,7 @@ export default {
 
         if ( senderType === 'remote' ) {
             contentAlign = 'justify-content-start';
-            senderName = data.sender;
+            senderName = data.sender.split('(')[0].split(/ $/)[0];
             msgBg = '';
 
             this.toggleChatNotificationBadge();
@@ -142,6 +208,7 @@ export default {
 
         let infoDiv = document.createElement( 'div' );
         infoDiv.className = 'sender-info';
+		console.log(senderName);
         infoDiv.innerText = `${ senderName } - ${ moment().format( 'Do MMMM, YYYY h:mm a' ) }`;
 
         let colDiv = document.createElement( 'div' );
@@ -150,6 +217,8 @@ export default {
 
         let rowDiv = document.createElement( 'div' );
         rowDiv.className = `row ${ contentAlign } mb-2`;
+		rowDiv.style.marginLeft = 0;
+		rowDiv.style.marginRight = 0;
 
 
         colDiv.appendChild( infoDiv );
@@ -179,28 +248,18 @@ export default {
     },
 
 
-
-    replaceTrack( stream, recipientPeer ) {
-        let sender = recipientPeer.getSenders ? recipientPeer.getSenders().find( s => s.track && s.track.kind === stream.kind ) : false;
-
-        sender ? sender.replaceTrack( stream ) : '';
-    },
-
-
-
     toggleShareIcons( share ) {
         let shareIconElem = document.querySelector( '#share-screen' );
 
+		const setTitle = title => { shareIconElem.setAttribute('title', title) };
         if ( share ) {
-            shareIconElem.setAttribute( 'title', 'Stop sharing screen' );
-            shareIconElem.children[0].classList.add( 'text-primary' );
-            shareIconElem.children[0].classList.remove( 'text-white' );
+            setTitle('Stop sharing screen');
+            shareIconElem.classList.replace('text-white', 'text-primary');
         }
 
         else {
-            shareIconElem.setAttribute( 'title', 'Share screen' );
-            shareIconElem.children[0].classList.add( 'text-white' );
-            shareIconElem.children[0].classList.remove( 'text-primary' );
+            setTitle('Share screen');
+            shareIconElem.classList.replace('text-primary', 'text-white');
         }
     },
 
@@ -213,21 +272,33 @@ export default {
     maximiseStream( e ) {
         let elem = e.target.parentElement.previousElementSibling;
 
-        elem.requestFullscreen() || elem.mozRequestFullScreen() || elem.webkitRequestFullscreen() || elem.msRequestFullscreen();
+        //elem.webkitRequestFullscreen() || elem.mozRequestFullScreen() || elem.msRequestFullscreen() || elem.requestFullscreen();
+  if (elem.requestFullscreen) {
+    elem.requestFullscreen();
+  } else if (elem.mozRequestFullScreen) {
+    elem.mozRequestFullScreen();
+  } else if (this.iosDevice) {
+	console.log('Safari iOS');
+    elem.webkitEnterFullScreen();
+  } else if (elem.webkitRequestFullscreen) {
+      elem.webkitRequestFullScreen();
+  } else if (elem.msRequestFullscreen) {
+    elem.msRequestFullscreen();
+  } else {
+    console.log('Fullscreen not working :(');
+  }
     },
 
 
     singleStreamToggleMute( e ) {
         if ( e.target.classList.contains( 'fa-microphone' ) ) {
             e.target.parentElement.previousElementSibling.muted = true;
-            e.target.classList.add( 'fa-microphone-slash' );
-            e.target.classList.remove( 'fa-microphone' );
+            e.target.classList.replace('fa-microphone', 'fa-microphone-slash' );
         }
 
         else {
             e.target.parentElement.previousElementSibling.muted = false;
-            e.target.classList.add( 'fa-microphone' );
-            e.target.classList.remove( 'fa-microphone-slash' );
+            e.target.classList.replace('fa-microphone-slash', 'fa-microphone' );
         }
     },
 
@@ -258,70 +329,8 @@ export default {
 
 
     setLocalStream( stream, mirrorMode = true ) {
-        const localVidElem = document.getElementById( 'local' );
-
-        localVidElem.srcObject = stream;
-        mirrorMode ? localVidElem.classList.add( 'mirror-mode' ) : localVidElem.classList.remove( 'mirror-mode' );
+        const myVideoEl = document.getElementById( 'local' );
+		myVideoEl.srcObject = stream;
+        mirrorMode ? myVideoEl.classList.add( 'mirror-mode' ) : myVideoEl.classList.remove( 'mirror-mode' );
     },
-
-
-    adjustVideoElemSize() {
-        let elem = document.getElementsByClassName( 'card' );
-        let totalRemoteVideosDesktop = elem.length;
-        let newWidth = totalRemoteVideosDesktop <= 2 ? '50%' : (
-            totalRemoteVideosDesktop == 3 ? '33.33%' : (
-                totalRemoteVideosDesktop <= 8 ? '25%' : (
-                    totalRemoteVideosDesktop <= 15 ? '20%' : (
-                        totalRemoteVideosDesktop <= 18 ? '16%' : (
-                            totalRemoteVideosDesktop <= 23 ? '15%' : (
-                                totalRemoteVideosDesktop <= 32 ? '12%' : '10%'
-                            )
-                        )
-                    )
-                )
-            )
-        );
-
-
-        for ( let i = 0; i < totalRemoteVideosDesktop; i++ ) {
-            elem[i].style.width = newWidth;
-        }
-    },
-
-
-    createDemoRemotes( str, total = 6 ) {
-        let i = 0;
-
-        let testInterval = setInterval( () => {
-            let newVid = document.createElement( 'video' );
-            newVid.id = `demo-${ i }-video`;
-            newVid.srcObject = str;
-            newVid.autoplay = true;
-            newVid.className = 'remote-video';
-
-            //video controls elements
-            let controlDiv = document.createElement( 'div' );
-            controlDiv.className = 'remote-video-controls';
-            controlDiv.innerHTML = `<i class="fa fa-microphone text-white pr-3 mute-remote-mic" title="Mute"></i>
-                <i class="fa fa-expand text-white expand-remote-video" title="Expand"></i>`;
-
-            //create a new div for card
-            let cardDiv = document.createElement( 'div' );
-            cardDiv.className = 'card card-sm';
-            cardDiv.id = `demo-${ i }`;
-            cardDiv.appendChild( newVid );
-            cardDiv.appendChild( controlDiv );
-
-            //put div in main-section elem
-            document.getElementById( 'videos' ).appendChild( cardDiv );
-
-            this.adjustVideoElemSize();
-
-            i++;
-
-            if ( i == total ) {
-                clearInterval( testInterval );
-            }
-        }, 2000 );
-    }
 };
