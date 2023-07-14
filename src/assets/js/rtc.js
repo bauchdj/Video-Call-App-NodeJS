@@ -454,23 +454,23 @@ document.querySelector('#local').play()
 
         //only on mobile devices
         const switchCamera = () => {
-			navigator.mediaDevices.enumerateDevices()
-				.then(devices => {
-					const videoDevices = devices.filter(device => {
-						const label = device.label.toLowerCase();
-  						return device.kind === 'videoinput' && label.includes('back');
-					});
-					const deviceConstraint = { deviceId: videoDevices.at(-1).deviceId }; //the constraint object determines what media is allowed, in this case video
-					const whichCamera = myStream.getVideoTracks()[0].getSettings().facingMode == "environment" ? "user" : deviceConstraint; //toggles the camera between front and rear
-					h.getUserFullMedia(whichCamera).then(stream => {
-						myStream = stream;
-						const mirrorMode = myStream.getVideoTracks()[0].getSettings().facingMode == "user" ? true : false;
-						broadcastNewTracks(myStream, 'video', mirrorMode);
-					});
-				})
-				.catch(error => {
-					console.error('Error enumerating devices:', error);
-				});
+					navigator.mediaDevices.enumerateDevices()
+						.then(devices => {
+							const videoDevices = devices.filter(device => {
+								const label = device.label.toLowerCase();
+  							return device.kind === 'videoinput' && label.includes('back');
+							});
+							const rearCamera = { deviceId: videoDevices.at(-1).deviceId }; //creates constraint object with rear camera id
+							const constraint = myStream.getVideoTracks()[0].getSettings().facingMode == "environment" ? "user" : rearCamera; //based on streams facingMode changes camera to front or rear by setting constraint
+							h.getUserFullMedia(constraint).then(stream => {
+								myStream = stream;
+								const mirrorMode = myStream.getVideoTracks()[0].getSettings().facingMode == "user" ? true : false;
+								broadcastNewTracks(myStream, 'video', mirrorMode);
+							});
+						})
+						.catch(error => {
+								console.error('Error enumerating devices:', error);
+						});
         }
         document.getElementById('flip-video').addEventListener( 'click', ( e ) => {
         	e.preventDefault();
