@@ -238,8 +238,9 @@ document.querySelector('#local').play()
                     //video controls elements
                     let controlDiv = document.createElement( 'div' );
                     controlDiv.className = 'remote-video-controls';
-                    controlDiv.innerHTML = `<i class="fa fa-microphone text-white pr-3 mute-remote-mic" title="Mute"></i>
-                        <i class="fa fa-expand text-white expand-remote-video" title="Expand"></i>`;
+                    controlDiv.innerHTML = `<i class="fa fa-microphone text-white pr-3 mute-remote-mic" title="Mute"></i> 
+                                            <i class="fa fa-expand text-white expand-remote-video" title="Expand"></i>`;
+                    controlDiv.children[0].style.paddingRight = '8px';
 
 					const nameDiv = document.createElement('div');
 					nameDiv.id = 'video-username';
@@ -295,8 +296,6 @@ document.querySelector('#local').play()
             };
         }
 
-
-
         function shareScreen() {
             h.shareScreen().then( ( stream ) => {
                 h.toggleShareIcons( true );
@@ -325,7 +324,7 @@ document.querySelector('#local').play()
         function stopSharingScreen() {
             //enable video toggle btn
             h.toggleVideoBtnDisabled( false );
-			screenSharingBool = false;
+			      screenSharingBool = false;
 
             return new Promise( ( res, rej ) => {
                 screen.getTracks().length ? screen.getTracks().forEach( track => track.stop() ) : '';
@@ -333,7 +332,7 @@ document.querySelector('#local').play()
                 res();
             } ).then( () => {
                 h.toggleShareIcons( false );
-				updateAudioTrack();
+				        updateAudioTrack();
                 broadcastNewTracks( myStream, 'video' );
             } ).catch( ( e ) => {
                 console.error( e );
@@ -431,51 +430,94 @@ document.querySelector('#local').play()
             }
         } );
 
-	const toggleMyVideo = () => {
+	      const toggleMyVideo = () => {
             let elem = document.getElementById('toggle-video');
             if ( myStream.getVideoTracks()[0].enabled ) {
+                document.getElementById('switch-camera').disabled = true;
                 elem.classList.replace('fa-video', 'fa-video-slash');
                 elem.setAttribute( 'title', 'Show Video' );
                 myStream.getVideoTracks()[0].enabled = false;
             } else {
+                document.getElementById('switch-camera').disabled = false;
                 elem.classList.replace('fa-video-slash', 'fa-video');
                 elem.setAttribute( 'title', 'Hide Video' );
                 myStream.getVideoTracks()[0].enabled = true;
             }
             broadcastNewTracks( myStream, 'video' );
-	}
+	      }
 
         document.addEventListener('keydown', e => { if (e.key === 'c') { toggleMyVideo() } });
 
         //When the video icon is clicked
         document.getElementById('toggle-video').addEventListener( 'click', ( e ) => {
         	e.preventDefault();
-			toggleMyVideo();
+			    toggleMyVideo();
         });
 
         //only on mobile devices
         const switchCamera = () => {
 					navigator.mediaDevices.enumerateDevices()
 						.then(devices => {
-							const rearVideoDevices = devices.filter(device => {
+							const videoDevices = devices.filter(device => {
 								const label = device.label.toLowerCase();
-  							return device.kind === 'videoinput' && !label.includes('telephoto') && label.includes('back');
+  							//return device.kind === 'videoinput' && !label.includes('telephoto') && label.includes('back');
+  							return device.kind === 'videoinput'; // && label.includes('back');
 							});
-							const rearCamera = { deviceId: rearVideoDevices.at(-1).deviceId }; //creates constraint object with rear camera id
-							const constraint = myStream.getVideoTracks()[0].getSettings().facingMode == "environment" ? "user" : rearCamera; //based on streams facingMode changes camera to front or rear by setting constraint
-							h.getUserFullMedia(constraint).then(stream => {
-								myStream = stream;
-								const mirrorMode = myStream.getVideoTracks()[0].getSettings().facingMode == "user" ? true : false;
-								broadcastNewTracks(myStream, 'video', mirrorMode);
+
+      videoDevices.push({ deviceId: 1, label: "one"  });
+      videoDevices.push({ deviceId: 2, label: "two"  });
+      videoDevices.push({ deviceId: 3, label: "three"  });
+
+              if (!videoDevices || !videoDevices[0]) return;
+
+							const blocker = document.body.appendChild(document.createElement("div"));
+							Object.assign(blocker.style, {
+								backgroundColor: 'rgba(0, 0, 0, 0.8)',
+								position: 'absolute',
+								inset: '0px',
+								display: 'flex',
+								justifyContent: 'center',
+								alignItems: 'center',
 							});
+              blocker.onclick = () => { blocker.remove() };
+
+							const displayModal = blocker.appendChild(document.createElement("div"));
+							Object.assign(displayModal.style, {
+								textAlign: 'center',
+								color: '#ffffff',
+                display: 'block',
+                width: 'auto',
+                backgroundColor: 'rgba(0, 0, 0, 0.6)',
+                padding: '8px',
+                borderRadius: '20px',
+                fontSize: '2rem',
+							});
+
+							for (let i = 0; i < videoDevices.length; i++) {
+								const camera = videoDevices[i];
+								const option = displayModal.appendChild(Object.assign(document.createElement("div"), { textContent: camera.label }));
+                //higher order function call :)
+								option.onclick = ((id) => {
+									return () => {
+										blocker.remove();
+                    //Stream facingMode: camera front ("user") or rear ("environement")? Set constraint accordingly
+                    //const constraint = myStream.getVideoTracks()[0].getSettings().facingMode == "environment" ? true : { deviceId: id };
+                    h.getUserFullMedia({ deviceId: id }).then(stream => {
+                      myStream = stream;
+                      const mirrorMode = myStream.getVideoTracks()[0].getSettings().facingMode == "environment" ? false : true;
+                      broadcastNewTracks(myStream, 'video', mirrorMode);
+                    });
+									};
+								})(camera.deviceId);
+							}
 						})
 						.catch(error => {
 								console.error('Error enumerating devices:', error);
 						});
         }
-        document.getElementById('flip-video').addEventListener( 'click', ( e ) => {
-        	e.preventDefault();
-            switchCamera();
+        document.getElementById('switch-camera').addEventListener( 'click', ( e ) => {
+       		e.preventDefault();
+          switchCamera();
         });
 
 	function updateAudioTrack() {

@@ -208,18 +208,17 @@ export default {
 
         let infoDiv = document.createElement( 'div' );
         infoDiv.className = 'sender-info';
-		console.log(senderName);
         infoDiv.innerText = `${ senderName } - ${ moment().format( 'Do MMMM, YYYY h:mm a' ) }`;
 
         let colDiv = document.createElement( 'div' );
         colDiv.className = `col-10 card chat-card msg ${ msgBg }`;
         colDiv.innerHTML = xssFilters.inHTMLData( data.msg ).autoLink( { target: "_blank", rel: "nofollow"});
+        colDiv.style.padding = '3px';
 
         let rowDiv = document.createElement( 'div' );
         rowDiv.className = `row ${ contentAlign } mb-2`;
-		rowDiv.style.marginLeft = 0;
-		rowDiv.style.marginRight = 0;
-
+		    rowDiv.style.marginLeft = 0;
+		    rowDiv.style.marginRight = 0;
 
         colDiv.appendChild( infoDiv );
         rowDiv.appendChild( colDiv );

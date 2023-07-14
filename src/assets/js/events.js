@@ -12,7 +12,7 @@ window.addEventListener( 'load', () => {
 	if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.maxTouchPoints > 2 && /MacIntel/.test(navigator.platform))) {
 		document.getElementById('share-screen').style.display = "none";
 		document.getElementById('record').style.display = "none";
-		document.getElementById('flip-video').style.display = "";
+		document.getElementById('switch-camera').style.display = "";
 	}
 
 	document.getElementById('local').addEventListener('loadedmetadata', e => { 
@@ -41,7 +41,7 @@ window.addEventListener( 'load', () => {
         }
 
         else {
-			chatElem.attributes.removeNamedItem('hidden');
+			      chatElem.attributes.removeNamedItem('hidden');
             mainSecElem.classList.remove( 'col-md-12' );
             mainSecElem.classList.add( 'col-md-9' );
             chatElem.classList.add( 'chat-opened' );
