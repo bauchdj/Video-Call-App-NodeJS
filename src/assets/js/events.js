@@ -45,15 +45,15 @@ window.addEventListener( 'load', () => {
 			chatElem.classList.add( 'chat-opened' );
 		}
 
-		document.querySelector("#chat-input").focus();
+		//document.querySelector("#chat-input").focus();
 
 		//remove the 'New' badge on chat icon (if any) once chat is opened.
-		setTimeout( () => {
-			if ( document.querySelector( '#chat-pane' ).classList.contains( 'chat-opened' ) ) {
+		setTimeout(() => {
+			if (document.querySelector('#chat-pane').classList.contains('chat-opened')) {
 				helpers.toggleChatNotificationBadge();
 			}
-		}, 300 );
-	} );
+		}, 100);
+	});
 
 /*
 	//When the video frame is clicked. This will enable picture-in-picture
@@ -77,7 +77,7 @@ window.addEventListener( 'load', () => {
 */
 
 	const createRoom = e => {
-		const roomName = document.querySelector( '#room-name' ).value;
+		const roomName = document.querySelector( '#room-name' ).value.toLowerCase();
 		const yourName = document.querySelector( '#your-name' ).value;
 		if (!roomName || !yourName) {
 			document.querySelector('#err-msg').innerText = "All fields are required";

@@ -236,6 +236,11 @@ body,
 	background-color: white;
 }
 
+.text-red:hover {
+	color: red;
+	background-color: white;
+}
+
 #close-single-peer-btn {
 	position: fixed;
 	top: 0;

@@ -199,6 +199,32 @@ export default {
 		};
 	},
 
+	filterMsg(str) { return xssFilters.inHTMLData(str).autoLink({ target: "_blank", rel: "nofollow"}).replace(/\n/g, '<br>') },
+
+	newMessagePopUp(data) {
+		const newMessageContainer = document.body.appendChild(Object.assign(document.createElement('div'), {
+			style: "position: fixed; top: -300px; left: 0; width: 100%; display: flex; justify-content: center; transition: top 0.8s;"
+		}));
+		const newMessage = newMessageContainer.appendChild(Object.assign(document.createElement('div'), {
+			style: "padding: 10px; background-color: #f9f9f9; color: #333; text-align: center; border-radius: 10px; font-family: 'Arial', sans-serif;"
+		}));
+		setTimeout(() => {
+			newMessageContainer.style.top = '15px';
+			const sender = `${data.to ? "" : "To Group, From:"} ${data.sender}`
+			const fromSubStr = data.to ? "<strong>private</strong>" : "group";
+			newMessage.innerHTML = `New ${fromSubStr} message from <strong>${data.sender.split('(')[0].split(/ $/)[0]}</strong><br><strong>"</strong>${this.filterMsg(data.msg)}<strong>"</strong>`;
+			const timeoutId = setTimeout(() => {
+				newMessageContainer.style.top = '-200px';
+				setTimeout(() => { newMessageContainer.remove(); }, 500);
+			}, 5000);
+			newMessage.onclick = () => {
+				document.querySelector('#toggle-chat-pane').click();
+				clearTimeout(timeoutId);
+				newMessageContainer.remove();
+			}
+		}, 100);
+	},
+
 
 	addChat( data, senderType ) {
 		let chatMsgDiv = document.querySelector( '#chat-messages' );
@@ -224,7 +250,8 @@ export default {
 
 		let colDiv = document.createElement( 'div' );
 		colDiv.className = `col-10 card chat-card msg ${ msgBg }`;
-		colDiv.innerHTML = xssFilters.inHTMLData(data.msg).autoLink({ target: "_blank", rel: "nofollow"}).replace(/\n/g, '<br>');
+		//colDiv.innerHTML = xssFilters.inHTMLData(data.msg).autoLink({ target: "_blank", rel: "nofollow"}).replace(/\n/g, '<br>');
+		colDiv.innerHTML = this.filterMsg(data.msg);
 		colDiv.style.padding = '3px';
 
 		let rowDiv = document.createElement( 'div' );

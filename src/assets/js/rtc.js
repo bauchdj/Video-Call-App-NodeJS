@@ -16,7 +16,8 @@ window.addEventListener( 'load', () => {
 	}
 
 	else if ( !username ) {
-		document.querySelector( '#username-set' ).attributes.removeNamedItem( 'hidden' );
+		document.querySelector('#username-set').attributes.removeNamedItem('hidden');
+		document.querySelector("#username").focus();
 	}
 
 	else {
@@ -108,6 +109,9 @@ window.addEventListener( 'load', () => {
 
 			socket.on( 'chat', ( data ) => {
 				h.addChat( data, 'remote' );
+				if (document.querySelector('#chat-pane').hidden) {
+					h.newMessagePopUp(data);
+				}
 			} );
 		} );
 
