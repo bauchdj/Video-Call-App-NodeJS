@@ -3,7 +3,7 @@
  * @date 6th January, 2020
  */
 import h from './helpers.js';
-//import iceServer from '../json/ice-server.json' assert { type: 'json' }; // Safari doesn't allow assert or with to specify type
+//import iceServer from '../json/ice-server.json' assert { type: 'json' }; // Safari doesn't allow assert to specify type
 import iceServer from './ice-server.js';
 
 window.addEventListener( 'load', () => {
@@ -477,7 +477,7 @@ document.querySelector('#local').play()
 
 					blocker.onclick = () => { blocker.remove() };
 
-					const displayModal = blocker.appendChild(document.createElement("div"));
+					const displayModal = blocker.appendChild(Object.assign(document.createElement("div"), { textContent: "Select a camera:" }));
 					Object.assign(displayModal.style, {
 						textAlign: 'center',
 						color: '#ffffff',
