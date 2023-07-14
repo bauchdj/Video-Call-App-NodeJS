@@ -1,29 +1,151 @@
+.ios-video {
+	object-fit: fill;
+}
+
+body,
+.card {
+	background-color: #4E4847;
+}
+
+.card {
+	height: fit-content;
+	border: 0px;
+}
+
+#video-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: auto;
+}
+
+.mirror-mode{
+    -ms-transform: scaleX(-1);
+    -moz-transform: scaleX(-1);
+    -webkit-transform: scaleX(-1);
+    transform: scaleX(-1);
+}
+
+@media (max-width:799px){
+    .chat-col{
+        right: -100vw;
+        width: 100vw;
+        /* bottom: 35px; */
+    }
+  
+    .chat-opened::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+#navbar {
+	background-color: rgba(0, 0, 0, 0.5);
+	padding: 4px;
+    width: min-content;
+	visibility: hidden;
+	border-radius: 20px;
+	font-size: 1rem;
+}
+
+.btn {
+	width: -webkit-fill-available;
+	padding: .5rem .5rem;
+	font-size: 1.1rem;
+}
+
+.my-handle {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 0 0 75px 75px;
+	border-color: transparent transparent rgba(0, 0, 0, 0.5) transparent;
+}
+
+#video-username {
+    position:absolute;
+	bottom: 0;
+    left: 0;
+    background-color:rgba(0, 0, 0, 0.5);
+	color: white;
+    /* z-index:300000; */
+    padding: 6px;
+    height: auto;
+	width: auto;
+    text-align: center;
+}
+
+.mute-remote-mic,
+.expand-remote-video {
+	font-size: 1.5rem;
+}
+
+.remote-video-controls {
+	background-color: rgba(0, 0, 0, 0.5);
+	position: absolute;
+	right: 0;
+	display: flex;
+	padding-left: 5.5px;
+	padding-right: 5.5px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+/* .remote-video-controls{
+    position:absolute;
+	top: 0;
+    right: 0;
+    background-color:rgba(0, 0, 0, 0.5);
+    /* z-index:300000; */
+    padding: 5px;
+    height: auto;
+    text-align: center;
+    visibility: visible;
+} */
+
+/*
+.remote-video:hover + .remote-video-controls,
+.remote-video-controls:hover{
+    visibility: visible;
+}
+*/
+
+#chat-form {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
 .chat-col{
     right: -100vw;
+    top: 0;
     bottom: 0;
-    top: 40.5px;
-    z-index: 1000;
     position: fixed;
     color: #fff;
     padding-right: 5px;
     padding-left: 5px;
-    padding-bottom: 40px;
+    /* padding-bottom: 40px; */
     padding-top: 15px;
-    min-height: 100vh;
 }
 
 .chat-col.chat-opened {
     right: 0;
-    overflow-y: auto;
-    overflow-x: hidden;
-    transition: all 0.3s ease !important;
-    -webkit-transition: all 0.3s ease !important;
-    -moz-transition: all 0.3s ease !important;
+}
+
+#new-chat-notification {
+	position:absolute;
+	top: auto;
+	right: auto;
 }
 
 #chat-messages{
-    height: 70vh;
-    margin-bottom: 20px;
+    height: 80vh;
     overflow-x: hidden;
     overflow-y: auto;
     scrollbar-width: none; /* Firefox */
@@ -62,51 +184,6 @@
     overflow-x: scroll;
 }
 
-.main{
-    padding-top: 40px;
-}
-
-
-.remote-video{
-    width:100%;
-    height:auto;
-    max-height: 90vh;
-}
-
-
-.remote-video-controls{
-    position:absolute;
-    bottom: 0;
-    background-color:rgba(0, 0, 0, 0.5);
-    z-index:300000;
-    padding: 10px;
-    width: 100%;
-    text-align: center;
-    visibility: hidden;
-}
-
-
-.remote-video:hover + .remote-video-controls,
-.remote-video-controls:hover{
-    visibility: visible;
-}
-
-
-.local-video{
-    bottom: 0;
-    left: 0;
-    position: fixed;
-    width:15vw;
-}
-
-
-.mirror-mode{
-    -ms-transform: scaleX(-1);
-    -moz-transform: scaleX(-1);
-    -webkit-transform: scaleX(-1);
-    transform: scaleX(-1);
-}
-
 
 .sender-info{
     font-size: smaller;
@@ -124,7 +201,7 @@
 
 
 .chat-card{
-    border-radius: 6px;
+    border-radius: 10px;
 }
 
 
@@ -144,7 +221,7 @@
     background: rgba(0, 0, 0, 0.5);
     color: #f1f1f1;
     border-radius: 0%;
-    z-index: 100;
+    /* z-index: 100; */
 }
 
 
@@ -166,7 +243,7 @@
 .custom-modal {
     display: none;
     position: fixed;
-    z-index: 10000;
+     z-index: 10000;
     left: 0;
     top: 0;
     width: 100%;
@@ -189,44 +266,3 @@
     to {top: 0; opacity: 1}
 }
 
-
-@media only screen and (max-width:767px){
-    .chat-col{
-        right: -100vw;
-        width: 100vw;
-        z-index: 99999;
-        transition: 0.3s;
-        top: 47px;
-    }
-  
-    .chat-opened::-webkit-scrollbar {
-        display: none;
-    }
-
-    #chat-messages{
-        height: 60vh;
-    }
-
-    .chat-box{
-        bottom: 90px;
-        margin-bottom: 0px;
-    }
-    
-    .card-sm{
-        max-width: 100%;
-        min-width: 50%;
-    }
-
-
-    .local-video{
-        width:40vw;
-    }
-}
-
-
-@media (min-width:768px){
-    .card{
-        width: 50%;
-        z-index: 1000;
-    }
-}
