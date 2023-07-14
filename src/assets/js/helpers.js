@@ -249,12 +249,12 @@ export default {
 
 
 	toggleChatNotificationBadge() {
-		if ( document.querySelector( '#chat-pane' ).classList.contains( 'chat-opened' ) ) {
-			document.querySelector( '#new-chat-notification' ).setAttribute( 'hidden', true );
-		}
-
-		else {
-			document.querySelector( '#new-chat-notification' ).removeAttribute( 'hidden' );
+		if (document.querySelector('#chat-pane').classList.contains('chat-opened')) {
+			document.querySelector('#new-chat-notification').setAttribute('hidden', true);
+			document.querySelector("#toggle-chat-pane").classList.replace('text-red', 'text-white');
+		} else {
+			document.querySelector('#new-chat-notification').removeAttribute('hidden');
+			document.querySelector("#toggle-chat-pane").classList.replace('text-white', 'text-red');
 		}
 	},
 
