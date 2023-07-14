@@ -10,6 +10,7 @@ body,
 .card {
 	height: fit-content;
 	border: 0px;
+	padding: 0px;
 }
 
 #video-container {
