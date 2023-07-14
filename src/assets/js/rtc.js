@@ -457,11 +457,11 @@ document.querySelector('#local').play()
         const switchCamera = () => {
 					navigator.mediaDevices.enumerateDevices()
 						.then(devices => {
-							const videoDevices = devices.filter(device => {
+							const rearVideoDevices = devices.filter(device => {
 								const label = device.label.toLowerCase();
-  							return device.kind === 'videoinput' && label.includes('back');
+  							return device.kind === 'videoinput' && !label.includes('telephoto') && label.includes('back');
 							});
-							const rearCamera = { deviceId: videoDevices.at(-1).deviceId }; //creates constraint object with rear camera id
+							const rearCamera = { deviceId: rearVideoDevices.at(-1).deviceId }; //creates constraint object with rear camera id
 							const constraint = myStream.getVideoTracks()[0].getSettings().facingMode == "environment" ? "user" : rearCamera; //based on streams facingMode changes camera to front or rear by setting constraint
 							h.getUserFullMedia(constraint).then(stream => {
 								myStream = stream;
