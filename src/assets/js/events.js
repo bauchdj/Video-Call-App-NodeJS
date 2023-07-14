@@ -75,9 +75,44 @@ window.addEventListener( 'load', () => {
 */
 
 	const createRoom = e => {
+		const roomCreated = document.querySelector('#room-created');
+		if (roomCreated) { roomCreated.remove(); }
+
 		const roomName = document.querySelector( '#room-name' ).value;
 		const yourName = document.querySelector( '#your-name' ).value;
-		const roomCreated = document.querySelector('#room-created');
+		if (!roomName || !yourName) {
+			document.querySelector('#err-msg').innerText = "All fields are required";
+			return
+		} 
+
+		document.querySelector('#err-msg').innerText = "";
+		if (yourName) { sessionStorage.setItem('username', yourName); }
+		const roomLink = `${location.origin}?room=${roomName.trim().replace(' ','_')}`;
+
+		const setButtons = (enterRoom, copyLink) => {
+			enterRoom.onclick = () => { window.location.href = roomLink; }
+			copyLink.onclick = () => {
+				navigator.clipboard.writeText(roomLink);
+				copyLink.textContent = "Link copied!";
+			}
+		};
+
+		// if no buttons have been added
+		if (e.children.length > 4) {
+			const c = e.children;
+			const cLen = c.length;
+			setButtons(c[cLen - 2], c[cLen - 1]);
+		} else {
+			const outerDiv = e => { return e.appendChild(Object.assign(document.createElement("div"), { className: "col-12 col-md-4 offset-md-4 mb-3" })); }
+			const innerDiv = (e, text) => { return e.appendChild(Object.assign(document.createElement("div"), { className: "btn btn-block rounded-0 btn-info", textContent: text })); }
+
+			const enterRoom = innerDiv(outerDiv(e), "Enter Room");
+			const copyLink = innerDiv(outerDiv(e), "Copy Link");
+
+			setButtons(enterRoom, copyLink);
+		}
+
+/*
 		const roomLink = (roomName && yourName) ? `${location.origin}?room=${roomName.trim().replace(' ','_')}` : (roomCreated.innerHTML ? roomCreated.children[0].href : '');
 
 		if (!roomLink) {
@@ -94,12 +129,13 @@ window.addEventListener( 'load', () => {
 				roomCreated.style.fontSize = '1.2rem';
 			}
 		}
+*/
 	}
 
 	//When the 'Create room" is button is clicked
 	document.getElementById('create-room').addEventListener('click', e => { 
 		e.preventDefault();
-		createRoom(e);
+		createRoom(e.target.parentNode.parentNode);
 	});
 
 	const enterRoom = e => {
@@ -121,14 +157,14 @@ window.addEventListener( 'load', () => {
 	//When the 'Enter room' button is clicked.
 	document.getElementById('enter-room').addEventListener('click', e => { 
 		e.preventDefault();
-		enterRoom(e);
+		enterRoom(e.target);
 	});
 
 	//Enable enter key on homepage and your name page
 	if (window.location.href === 'https://call.talkofchrist.org/') {
-		document.addEventListener('keydown', e => { if (e.key === 'Enter') { createRoom(e) } }); 
+		document.addEventListener('keydown', e => { if (e.key === 'Enter') { createRoom(document.getElementById('create-room').parentNode.parentNode); } }); 
 	} else if (!sessionStorage[username]) {
-		document.addEventListener('keydown', e => { if (e.key === 'Enter') { enterRoom(e) } });
+		document.addEventListener('keydown', e => { if (e.key === 'Enter') { enterRoom(document.getElementById('enter-room')); } });
 	}
 
 	document.addEventListener( 'click', ( e ) => {
