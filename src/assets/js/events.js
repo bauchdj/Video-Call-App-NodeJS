@@ -86,7 +86,7 @@ window.addEventListener( 'load', () => {
 
 		document.querySelector('#err-msg').innerText = "";
 		if (yourName) { sessionStorage.setItem('username', yourName); }
-		const roomLink = `${location.origin}?room=${roomName.trim().replace(' ','_')}`;
+		const roomLink = `${location.origin}/?room=${roomName.trim().replace(' ','_')}`;
 
 		const setButtons = (enterRoom, copyLink) => {
 			copyLink.textContent = "Copy Link";
